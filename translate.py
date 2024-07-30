@@ -15,8 +15,13 @@ import os
 #   - WP_USER
 #   - WP_PW           (this is not your login, but the auth password)
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+LOGFILE="app.log"
+translate_logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, 
+    filename=LOGFILE,
+    filemode='a',
+    format='%(asctime)s [%(name)s %(levelname)s] - %(message)s')
 
 client = OpenAI(
     api_key=os.environ['OPENAI_API_KEY']
@@ -33,6 +38,11 @@ wordpress_header = {
     'Authorization': 'Basic ' + wordpress_token.decode('utf-8'),
     'Content-Type': 'application/json'
     }
+
+
+def delete_log_file():
+    with open('app.log', 'w'):
+        pass
 
 
 def get_id_from_url(url: str) -> str:
@@ -55,7 +65,7 @@ def find_translation(url: str) -> str:
     return False
 
 def handle_links(string: str) -> str:
-    logger.info(f"Checking for links to replace...")
+    translate_logger.info(f"Checking for links to replace...")
     anchor_pattern = "<a href=\\\"https:\/\/dice-scroller.com\/.*?\">.*?<\/a>"
     list_of_anchor_tags = re.findall(pattern=anchor_pattern, string=string)
     for anchor_tag in list_of_anchor_tags:
@@ -64,39 +74,39 @@ def handle_links(string: str) -> str:
         replacement = find_translation(url)
 
         if replacement:
-            logger.info(f"Replacing URL: {url[:10]} ... {url[-20:]} ==> {replacement}")
+            translate_logger.info(f"Replacing URL: {url[:10]} ... {url[-20:]} ==> {replacement}")
             string = string.replace(url, replacement)
 
         else:
             # replace anchor tag
             anchor_content_pattern = "(?<=>).*?(?=</a>)"
             anchor_replacement = re.search(pattern=anchor_content_pattern, string=anchor_tag).group()
-            logger.info(f"Replacing Anchor: {anchor_tag[:10]} ... {anchor_tag[-20:]} ==> {anchor_replacement}")
+            translate_logger.info(f"Replacing Anchor: {anchor_tag[:10]} ... {anchor_tag[-20:]} ==> {anchor_replacement}")
             string = string.replace(anchor_tag, anchor_replacement)
 
     return string
 
 
 def get_wp_post(id: str) -> dict:    
-    logger.info(f"GET post with ID: {id}")
+    translate_logger.info(f"GET post with ID: {id}")
     url = f"https://dice-scroller.com/wp-json/wp/v2/posts/{id}"
     resp = requests.get(url=url)
-    logger.info("Status: " + f"{resp.status_code}")
+    translate_logger.info("Status: " + f"{resp.status_code}")
     with open("reponse.json", "w") as f:
-        logger.info("Writing to file...")
+        translate_logger.info("Writing to file...")
         f.writelines(json.dumps(resp.json(), indent=2))
     
     return resp.json()
 
 
 def translate_with_deepl(string: str) -> str:
-    logger.info("Translate using DeepL...")
+    translate_logger.info("Translate using DeepL...")
     result = translator.translate_text(string, target_lang="EN-US")
     return result.text
 
 
 def verifiy_using_gpt(german: str, english: str) -> str:
-    logger.info("Verify using GPT...")
+    translate_logger.info("Verify using GPT...")
     completion = client.chat.completions.create(
       model="gpt-4-turbo",
       messages=[
@@ -139,15 +149,20 @@ def fill_in_data(json: dict, content: str) -> dict:
     
 
 def post_to_wp(data) -> None:
-    logger.info("Posting to WordPress...")
+    translate_logger.info("Posting to WordPress...")
     api_url = 'https://dice-scroller.com/wp-json/wp/v2/posts'
     response = requests.post(api_url,headers=wordpress_header, json=data)
-    logger.info("Reponse: " + f"{response.status_code}\n{response.json()}")
+    translate_logger.info("Reponse: " + f"{response.status_code})")
     assert response.status_code == 201, "Response should be 201: Created"
+    translate_logger.info("Draft created in WordPress")
 
 
-def main():
-    url = "https://dice-scroller.com/die-zwerge-in-dnd/"
+def translate(
+        url: str
+    ):
+    if not url or "https://dice-scroller.com/" not in url:
+        translate_logger.error("URL including 'https://dice-scroller.com/' required.")
+        return
     id = get_id_from_url(url)
     wp_post_json = get_wp_post(id)
     content = wp_post_json["content"]["rendered"]
@@ -156,7 +171,8 @@ def main():
     gpt_verified = verifiy_using_gpt(german=content, english=deepl_translated)
     post_data = fill_in_data(wp_post_json, gpt_verified)
     post_to_wp(post_data)
+    translate_logger.info("Post translated!")
     
 
 if __name__ == '__main__':
-    main()
+    translate("https://dice-scroller.com/hexenmeister-in-dnd/")

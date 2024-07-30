@@ -20,3 +20,8 @@ We started doing translation manually, which worked okay for a bit but got reall
 Currently, the meta description is not set by the script. There is not endpoint for it in the REST API and the plugin we use (Yoast) seems to charge for this use case. 
 
 The localization is not done automatically, so directly posting the translation will result in an English post on a German site. We use Polylang to manage translated posts and have to manually set this as well.
+
+"""bash
+source venv/Scripts/activate
+
+"""

@@ -1,0 +1,13 @@
+
+html, body {
+    height: 100%;
+    background-color: #E6E6E6;
+}
+.content {
+    width: 80%;
+    margin: auto;
+}
+
+.log-container {
+    width: 80%;
+}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Translate stuff
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<h1>Translate the Post</h1>
+<form action="#" method="post">
+    <label for="validationDefault04" class="form-label">Search url</label>
+    <input class="form-control me-2" id="validationDefault04" type="search" placeholder="https://dice-scroller.com/example" name="srch" aria-label="Search">
+    <button class="btn btn-primary" type="submit" value="submit">Translate!</button>
+</form>
+<div hx-get="/log" hx-trigger="every 1s" hx-target="#log-container" hx-swap="innerHTML"></div>
+
+<div class="card">
+    <div class="card-body">
+        <samp class="log-container" id="log-container">
+            {% for line in log %}
+            {{ line }}
+            <br>
+            {% endfor %}
+        </samp>
+    </div>
+</div>
+
+{% endblock %}
