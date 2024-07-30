@@ -21,7 +21,24 @@ Currently, the meta description is not set by the script. There is not endpoint 
 
 The localization is not done automatically, so directly posting the translation will result in an English post on a German site. We use Polylang to manage translated posts and have to manually set this as well.
 
-"""bash
-source venv/Scripts/activate
+## To run
+Clone the repo using
+```
+git clone https://github.com/MaximeBonnin/dice_scroller_automation.git
+```
 
-"""
+create a virtual python environment and active it
+```
+python -m venv venv
+source ./venv/Scripts/activate
+```
+Install the requirements
+```
+pip install -r ./requirements.txt
+```
+
+Now you should be ready to run the app!
+```
+flask run
+```
+It should now be running on your http://localhost:5000/
