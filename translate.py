@@ -157,11 +157,12 @@ def post_to_wp(data) -> None:
     translate_logger.info("Draft created in WordPress")
 
 
-def translate(
-        url: str
-    ):
+def translate(url: str):
     if not url or "https://dice-scroller.com/" not in url:
         translate_logger.error("URL including 'https://dice-scroller.com/' required.")
+        return
+    if find_translation(url):
+        translate_logger.error("URL already translated")
         return
     id = get_id_from_url(url)
     wp_post_json = get_wp_post(id)
@@ -172,6 +173,7 @@ def translate(
     post_data = fill_in_data(wp_post_json, gpt_verified)
     post_to_wp(post_data)
     translate_logger.info("Post translated!")
+    translate_logger.info(f"Translated post in editor: <a href='https://dice-scroller.com/wp-admin/post.php?post={id}&action=edit'>https://dice-scroller.com/wp-admin/post.php?post={id}&action=edit</a>")
     
 
 if __name__ == '__main__':
