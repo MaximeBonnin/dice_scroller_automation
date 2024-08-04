@@ -54,9 +54,9 @@ def get_id_from_url(url: str) -> str:
     return id
 
 
-def find_translation(url: str) -> str:
+def find_translation(url: str, lang: str = "en") -> str:
     response = requests.get(url)
-    pattern = "https:\/\/dice-scroller.com\/en/[^\"]*/"
+    pattern = f"https:\/\/dice-scroller.com\/{lang}/[^\"]*/"
     found = re.search(string=response.text, pattern=pattern)
     
     if found:
