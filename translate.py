@@ -8,6 +8,7 @@ import requests
 from openai import OpenAI
 import logging
 import os
+from Post import Post
 
 # required environment variables:
 #   - OPENAI_API_KEY
@@ -40,9 +41,14 @@ wordpress_header = {
     }
 
 
+
+
 def delete_log_file():
     with open('app.log', 'w'):
         pass
+
+
+
 
 
 def get_id_from_url(url: str) -> str:
@@ -55,6 +61,7 @@ def get_id_from_url(url: str) -> str:
 
 
 def find_translation(url: str, lang: str = "en") -> str:
+    last_character_to_check = 2000 # since it should be in the header, this should be fine. Parsing would be better prob
     response = requests.get(url)
     pattern = f"https:\/\/dice-scroller.com\/{lang}/[^\"]*/"
     found = re.search(string=response.text, pattern=pattern)
@@ -161,11 +168,11 @@ def translate(url: str):
     if not url or "https://dice-scroller.com/" not in url:
         translate_logger.error("URL including 'https://dice-scroller.com/' required.")
         return
+    id = get_id_from_url(url)
+    wp_post_json = get_wp_post(id)
     if find_translation(url):
         translate_logger.error("URL already translated")
         return
-    id = get_id_from_url(url)
-    wp_post_json = get_wp_post(id)
     content = wp_post_json["content"]["rendered"]
     content = handle_links(content)
     deepl_translated = translate_with_deepl(content)
