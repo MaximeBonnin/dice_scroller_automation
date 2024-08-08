@@ -1,7 +1,8 @@
 
 html, body {
     height: 100%;
-    background-color: #E6E6E6;
+    background-color: #29363d;
+    color: #b0c2bc;
 }
 
 button {
@@ -16,4 +17,15 @@ button {
 
 .log-container {
     width: 80%;
+}
+
+
+h1 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+
+.image-container {
+    text-align: center;
 }

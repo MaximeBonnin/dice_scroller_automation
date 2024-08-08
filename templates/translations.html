@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+Translation Overview
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<h1>Translation Overview</h1>
+<div class="main-table" hx-get="/translations_table" hx-trigger="load" hx-swap="innerHTML">
+    <table class="table table-striped table-dark table-bordered" >
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>DE</th>
+                <th>EN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Loading...</td>
+                <td><span class="badge bg-secondary">Loading</span></td>
+                <td><span class="badge bg-secondary">Loading</span></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="image-container">
+        <img  alt="Result loading..." class="htmx-indicator" width="150" src="{{ url_for('static', filename='bars1.svg') }}" />
+    </div>
+</div>
+{% endblock %}

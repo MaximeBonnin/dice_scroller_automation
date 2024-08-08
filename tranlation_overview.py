@@ -19,11 +19,11 @@ def get_list_of_posts() -> list["Post"]:
 
 
 
-def main():
+def translation_overview():
     post_list = get_list_of_posts()
 
 
 
 
 if __name__ == "__main__":
-    main()
+    translation_overview()

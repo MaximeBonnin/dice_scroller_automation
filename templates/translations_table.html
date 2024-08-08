@@ -1,0 +1,38 @@
+<table class="table table-striped table-dark table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>DE</th>
+            <th>EN</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post in all_posts %}
+            <tr>
+                <td>{{ post.title }}</td>
+                <td>
+                    {% if post.translations.de %}
+                    <p>
+                        <span class="badge bg-success">Translated</span>
+                    </p>
+                    {% else %}
+                    <p>
+                        <span class="badge bg-danger">Missing</span>
+                    </p>
+                    {% endif %}
+                </td>
+                <td>                    
+                    {% if post.translations.en %}
+                    <p>
+                        <span class="badge bg-success">Translated</span>
+                    </p>
+                    {% else %}
+                    <p>
+                        <span class="badge bg-danger">Missing</span>
+                    </p>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

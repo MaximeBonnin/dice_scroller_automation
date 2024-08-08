@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
+from pprint import pprint
 from translate import translate, translate_logger, delete_log_file
 import logging
+from tranlation_overview import get_list_of_posts
+from Post import Post
 
 delete_log_file()
 app = Flask(__name__)
@@ -28,6 +31,21 @@ def get_log():
         log_list = logfile.readlines()
         filtered_logs = [l for l in log_list if "translate" in l]
     return render_template("log.html", log=filtered_logs)
+
+
+@app.route("/translations", methods=["GET"])
+def translations():
+    return render_template("translations.html")
+
+
+@app.route("/translations_table", methods=["GET"])
+def translations_table():
+    
+    list_of_posts = get_list_of_posts()
+
+    # pprint(table_content)
+
+    return render_template("translations_table.html", all_posts = list_of_posts)
 
 
 if __name__ == "__main__":
