@@ -12,10 +12,11 @@ class Post():
         self.translations = {lang: None for lang in Post.POSSIBLE_LANGUAGES}
         
         self.set_language()
-        self.set_body()
-        self.find_translations()
+        self.body = ""
+        # self.set_body()
+        # self.find_translations()
         
-        pprint(self.translations)
+        # pprint(self.translations)
         
     def set_body(self):
         response = requests.get(self.url)
@@ -31,7 +32,7 @@ class Post():
         title_pattern = "(?<=<title>).+(?= - Dice Scroller<\/title>)"
         
         self.title = re.search(string=self.body[:last_character_to_check], pattern=title_pattern).group()
-        self.title.replace("&amp;", "&").replace("&#038;", "&").replace("&#8217;", "'").replace("&#039;", "'")
+        self.title = self.title.replace("&amp;", "&").replace("&#038;", "&").replace("&#8217;", "'").replace("&#039;", "'")
         found = re.findall(string=self.body[:last_character_to_check], pattern=link_tag_pattern)
         
         if not found:

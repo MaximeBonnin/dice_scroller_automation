@@ -1,29 +1,33 @@
+import asyncio
+import aiohttp
 import requests
 import xmltodict
-from pprint import pprint
-from translate import find_translation
 from Post import Post
+
 
 SITEMAP_URL = "https://dice-scroller.com/post-sitemap.xml"
 
 
-
-def get_list_of_posts() -> list["Post"]:
-    response = requests.get(SITEMAP_URL)
-    xml_as_dict = xmltodict.parse(response.text)
-    post_list = []
-    for entry in xml_as_dict["urlset"]["url"]:
-        print(f"Creating post: {entry['loc']}")
-        post_list.append(Post(entry["loc"]))
-    return post_list
+async def async_create_post(session, url, **kwargs):
+    async with session.get(url, **kwargs) as resp:
+        new_post = Post(url)
+        new_post.body = await resp.text()
+        new_post.find_translations()
+        return new_post
 
 
+async def get_all_posts():
+    async with aiohttp.ClientSession() as session:
+        response = requests.get(SITEMAP_URL)
+        xml_as_dict = xmltodict.parse(response.text)
 
-def translation_overview():
-    post_list = get_list_of_posts()
+        tasks = []
+        for entry in xml_as_dict["urlset"]["url"]:
+            tasks.append(async_create_post(session=session, url=entry["loc"]))
+        posts = await asyncio.gather(*tasks, return_exceptions=True)
+        return posts
 
 
-
-
-if __name__ == "__main__":
-    translation_overview()
+if __name__ == '__main__':
+    response_list = asyncio.run(get_all_posts()) 
+    print(response_list)

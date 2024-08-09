@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
+import asyncio
 from pprint import pprint
 from translate import translate, translate_logger, delete_log_file
 import logging
-from tranlation_overview import get_list_of_posts
-from Post import Post
+from tranlation_overview import get_all_posts
 
 delete_log_file()
 app = Flask(__name__)
@@ -22,7 +22,8 @@ def index():
     if request.method == "POST":
         return handle_input(request)
 
-    return render_template("index.html")
+    url = request.args.get("url", default=None)
+    return render_template("index.html", url_to_search = url)
 
 
 @app.route("/log", methods=["GET"])
@@ -38,10 +39,15 @@ def translations():
     return render_template("translations.html")
 
 
+@app.route("/affiliate", methods=["GET"])
+def affiliate():
+    return render_template("affiliate.html")
+
+
 @app.route("/translations_table", methods=["GET"])
 def translations_table():
     
-    list_of_posts = get_list_of_posts()
+    list_of_posts = asyncio.run(get_all_posts()) 
 
     # pprint(table_content)
 

@@ -1,0 +1,35 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+Affiliate Overview
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<h1>Affiliate Overview</h1>
+
+<input oninput="createLink()" id="affiliate" type="text" placeholder="Affiliate link here">
+<input oninput="createLink()" id="text-content" type="text" placeholder="Text here">
+
+<p><a id="output" href="#"></a></p>
+
+<script>
+    function createLink() {
+        console.log("Generating link")
+        // Get the text field
+        var affliateLink = document.getElementById("affiliate").value;
+        console.log(affliateLink)
+        var textContent = document.getElementById("text-content").value;
+        console.log(textContent)
+        var outputElement = document.getElementById("output");
+        
+        outputElement.setAttribute("href", affliateLink);
+        outputElement.innerHTML = textContent + " 🛒";
+    }
+</script>
+
+
+{% endblock %}

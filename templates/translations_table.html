@@ -9,7 +9,9 @@
     <tbody>
         {% for post in all_posts %}
             <tr>
-                <td>{{ post.title }}</td>
+                <td>
+                    {{ post.title }} <a class="translate-cta" href="/?url={{ post.url }}">Translate now</a>
+                </td>
                 <td>
                     {% if post.translations.de %}
                     <p>
