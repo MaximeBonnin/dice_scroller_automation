@@ -1,12 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, session, redirect
+import hashlib
+import pandas as pd
 import asyncio
 from pprint import pprint
 from translate import translate, translate_logger, delete_log_file
 import logging
 from tranlation_overview import get_all_posts
+from Post import Post
+import os
 
 delete_log_file()
 app = Flask(__name__)
+app.secret_key = os.environ["APP_SECRET_KEY"]
+
 translate_logger.info("App started. Ready to serve requests")
 
 
@@ -17,8 +23,33 @@ def handle_input(request):
     return render_template("index.html")
 
 
+def load_affiliates():
+    df = pd.read_csv("affiliate_links.csv")
+    df = df.replace("'", "’", regex=True)
+    return df.to_dict("records")
+
+
+def login_user(email: str, password: str) -> bool:
+    encoded_string = f"{email}:{password}".encode(encoding="utf-8")
+    encrypted_credentials = hashlib.sha256(encoded_string).hexdigest()
+    valid_user = encrypted_credentials == os.environ["USER_CREDS"]
+    if valid_user:
+        session["email"] = email
+        return True
+    else:
+        return False
+
+
+def logged_in() -> bool:
+    # this is probably not safe lol
+    return "email" in session
+
+
 @app.route("/", methods=['GET', "POST"])
 def index():
+    if not logged_in():
+        return redirect(url_for("login"), code=403)
+
     if request.method == "POST":
         return handle_input(request)
 
@@ -26,8 +57,32 @@ def index():
     return render_template("index.html", url_to_search = url)
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+
+    login_success = login_user(email=request.form["Email"], password=request.form["Password"])
+    if not login_success:
+        return render_template("login.html")
+
+    return redirect(url_for("index"))
+
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    if not logged_in():
+        return redirect(url_for("login"), code=403)
+    
+    session.pop("email", None)
+    return redirect(url_for("login"))
+    
+
 @app.route("/log", methods=["GET"])
 def get_log():
+    if not logged_in():
+        return redirect(url_for("login"), code=403)
+
     with open("app.log", "r") as logfile:
         log_list = logfile.readlines()
         filtered_logs = [l for l in log_list if "translate" in l]
@@ -36,22 +91,30 @@ def get_log():
 
 @app.route("/translations", methods=["GET"])
 def translations():
+    if not logged_in():
+        return redirect(url_for("login"), code=403)
+
     return render_template("translations.html")
 
 
 @app.route("/affiliate", methods=["GET"])
 def affiliate():
-    return render_template("affiliate.html")
+    if not logged_in():
+        return redirect(url_for("login"), code=403)
+
+    return render_template("affiliate.html", table=load_affiliates())
 
 
 @app.route("/translations_table", methods=["GET"])
 def translations_table():
+    if not logged_in():
+        return redirect(url_for("login"), code=403)
     
-    list_of_posts = asyncio.run(get_all_posts()) 
+    list_of_posts: list["Post"] = asyncio.run(get_all_posts()) 
 
-    # pprint(table_content)
+    filtered_list_of_posts = [p for p in list_of_posts if p.language == "de"]
 
-    return render_template("translations_table.html", all_posts = list_of_posts)
+    return render_template("translations_table.html", all_posts = filtered_list_of_posts)
 
 
 if __name__ == "__main__":

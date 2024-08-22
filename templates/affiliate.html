@@ -11,10 +11,21 @@ Affiliate Overview
 {% block content %}
 <h1>Affiliate Overview</h1>
 
-<input oninput="createLink()" id="affiliate" type="text" placeholder="Affiliate link here">
-<input oninput="createLink()" id="text-content" type="text" placeholder="Text here">
-
-<p><a id="output" href="#"></a></p>
+<div class="card text-white bg-dark mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Generate Affiliate Link</h5>
+        <label for="affiliate">Put the affiliate link here</label>
+        <input class="form-control me-2" oninput="createLink()" id="affiliate" type="text" placeholder="https://amzn.to/4ddZDex">
+        
+        <label for="text-content">Enter the link text here</label>
+        <input class="form-control me-2" oninput="createLink()" id="text-content" type="text" placeholder="Player's Hanbook">
+        
+        <p>
+            <button class="btn btn-light" onclick="copyToClipboard()">Copy</button>
+            <a id="output" href="#" hidden="hidden">Output Link 🛒</a>
+        </p>
+    </div>
+</div>
 
 <script>
     function createLink() {
@@ -29,7 +40,79 @@ Affiliate Overview
         outputElement.setAttribute("href", affliateLink);
         outputElement.innerHTML = textContent + " 🛒";
     }
+
+    function copyToClipboard() {
+        // Get the link element
+        var copyText = document.getElementById("output");
+
+        // Create a temporary textarea element to hold the HTML
+        var textarea = document.createElement("textarea");
+        textarea.value = copyText.outerHTML; // Set the value to the HTML of the link
+
+        // Append the textarea to the document body (it's required to be in the DOM to be selected)
+        document.body.appendChild(textarea);
+
+        // Select the content of the textarea
+        textarea.select();
+
+        // Execute the copy command
+        document.execCommand("copy");
+
+        // Remove the textarea from the document body
+        document.body.removeChild(textarea);
+
+        console.log("Link copied to clipboard as HTML:", textarea.value);
+    }
 </script>
 
+<div class="card bg-dark md-3">
+    <table class="table table-striped table-dark table-bordered">
+        <tbody>
+            {% for entry in table %}
+                <tr>
+                    <td class="affiliate-td">
+                        <!-- <a href="{{ entry.english_link }}">{{ entry.english_name }} 🛒</a> -->
+                        <button class="btn btn-light btn-sm" onclick="copyToClipboardWithInput('{{ entry.english_link }}', '{{ entry.english_name }}')">Copy <b>{{ entry.english_name }} 🛒</b></button>
+                    </td>
+                    <td>
+                        <!-- <a href="{{ entry.german_link }}">{{ entry.german_name }} 🛒</a> -->
+                        <button class="btn btn-light btn-sm" onclick="copyToClipboardWithInput('{{ entry.german_link }}', '{{ entry.german_name }}')">Copy <b>{{ entry.german_name }} 🛒</b></button>
+                    </td>
+                    <td>
+                        <!-- <a href="{{ entry.english_link }}">{{ entry.short_name }} 🛒</a> -->
+                        <button class="btn btn-light btn-sm" onclick="copyToClipboardWithInput('{{ entry.english_link }}', '{{ entry.short_name }}')">Copy <b>{{ entry.short_name }} 🛒</b></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function copyToClipboardWithInput(link, text) {
+        // Get the link element
+        var outputElement = document.getElementById("output");
+        outputElement.innerHTML = text + " 🛒";
+        outputElement.setAttribute("href", link);
+
+        // Create a temporary textarea element to hold the HTML
+        var textarea = document.createElement("textarea");
+        textarea.value = outputElement.outerHTML; // Set the value to the HTML of the link
+
+        // Append the textarea to the document body (it's required to be in the DOM to be selected)
+        document.body.appendChild(textarea);
+
+        // Select the content of the textarea
+        textarea.select();
+
+        // Execute the copy command
+        document.execCommand("copy");
+
+        // Remove the textarea from the document body
+        document.body.removeChild(textarea);
+
+        console.log("Link copied to clipboard as HTML:", textarea.value);
+    }
+</script>
 
 {% endblock %}

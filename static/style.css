@@ -37,3 +37,15 @@ h1 {
 .translate-cta:hover {
     color: white;
 }
+
+.btn-small {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0 !important; 
+    margin-bottom: 0 !important;
+}
+
+.affiliate-td {
+    display: flex;
+    justify-content: space-between;
+}
