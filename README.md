@@ -43,6 +43,23 @@ Install the requirements
 pip install -r ./requirements.txt
 ```
 
+Add the required environment variables
+```sh
+# API keys
+OPENAI_API_KEY=
+DEEPL_KEY=
+
+# Wordpress login
+WP_USER=
+WP_PW=
+
+# flask secret key
+APP_SECRET_KEY=
+
+# sha256 encrypted user login in the format {email}:{password}
+USER_CREDS=
+```
+
 Now you should be ready to run the app!
 ```
 flask run
