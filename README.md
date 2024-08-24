@@ -21,7 +21,13 @@ Currently, the meta description is not set by the script. There is not endpoint 
 
 The localization is not done automatically, so directly posting the translation will result in an English post on a German site. We use Polylang to manage translated posts and have to manually set this as well.
 
-## To run
+## Additional features
+
+__Translation Overview:__ Added the funcitonailty to use a sitemap to check all the posts and verify if they are already transalted. Then the ability to translated the missing ones easily. 
+
+__Affiliate Overview:__ Additional function to easily format and use affiliate links.
+
+## How to run locally
 Clone the repo using
 ```
 git clone https://github.com/MaximeBonnin/dice_scroller_automation.git
