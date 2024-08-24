@@ -55,6 +55,7 @@ WP_PW=
 
 # flask secret key
 APP_SECRET_KEY=
+JWT_SECRET_KEY=
 
 # sha256 encrypted user login in the format {email}:{password}
 USER_CREDS=
