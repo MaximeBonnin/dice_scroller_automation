@@ -36,14 +36,15 @@ on:
     branches: [ "main" ]
 
 env:
-  PROJECT_ID: '${{ secrets.GOOGLE_CLOUD_PROJECT }}' # TODO: update to your Google Cloud project ID
-  REGION: '${{ secrets.GCP_REGION }}' # TODO: update to your region
-  SERVICE: '${{ secrets.SERVICE_NAME }}' # TODO: update to your service name
-  WORKLOAD_IDENTITY_PROVIDER: '${{ secrets.WORKLOAD_IDENTITY_PROVIDER_NAME }}' # TODO: update to your workload identity provider
+  PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT }} # TODO: update to your Google Cloud project ID
+  REGION: ${{ secrets.GCP_REGION }} # TODO: update to your region
+  SERVICE: ${{ secrets.SERVICE_NAME }} # TODO: update to your service name
+  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_NAME }} # TODO: update to your workload identity provider
 
 jobs:
   deploy:
     runs-on: 'ubuntu-latest'
+    environment: 'Build'
 
     permissions:
       contents: 'read'
