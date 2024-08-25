@@ -3,12 +3,10 @@ import re
 from slugify import slugify
 import base64
 import json
-from pprint import pprint
 import requests
 from openai import OpenAI
 import logging
 import os
-from Post import Post
 
 # required environment variables:
 #   - OPENAI_API_KEY
@@ -72,7 +70,7 @@ def find_translation(url: str, lang: str = "en") -> str:
     return False
 
 def handle_links(string: str) -> str:
-    translate_logger.info(f"Checking for links to replace...")
+    translate_logger.info("Checking for links to replace...")
     anchor_pattern = "<a href=\\\"https:\/\/dice-scroller.com\/.*?\">.*?<\/a>"
     list_of_anchor_tags = re.findall(pattern=anchor_pattern, string=string)
     for anchor_tag in list_of_anchor_tags:

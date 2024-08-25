@@ -117,5 +117,5 @@ def translations_table():
 
 
 if __name__ == "__main__":
-    print(f"Starting...")
+    print("Starting...")
     app.run(debug=True)
