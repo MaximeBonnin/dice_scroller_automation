@@ -9,11 +9,64 @@ Translate stuff
 
 {% block content %}
 <h1>Translate the Post</h1>
-<form action="#" method="post">
+<form id="translateForm" action="#" method="post">
     <label for="validationDefault04" class="form-label">Search url</label>
     <input class="form-control me-2" id="validationDefault04" type="search" placeholder="https://dice-scroller.com/example" name="srch" aria-label="Search" >
     <button class="btn btn-light" type="submit" value="submit">Translate!</button>
 </form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById('translateForm');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the form data
+            const formData = new FormData(form);
+            
+            // Get the CSRF token from the cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            const csrfToken = getCookie('csrf_access_token');
+            
+            // Send the POST request using fetch API
+            fetch('#', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken, // Add the CSRF token to the headers
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // Handle success (e.g., update the UI)
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+    });
+</script>
 
 {% if url_to_search %}
 <script>

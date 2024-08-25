@@ -48,6 +48,7 @@ def login_user(email: str, password: str) -> bool:
 @jwt.unauthorized_loader
 def custom_unauthorized_response(_err):
     # TODO log this
+    print(_err)
     return redirect(url_for('login'))
 
 
