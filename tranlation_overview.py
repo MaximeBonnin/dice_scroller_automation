@@ -3,6 +3,7 @@ import aiohttp
 import requests
 import xmltodict
 from Post import Post
+from translate import translate_logger
 
 
 SITEMAP_URL = "https://dice-scroller.com/post-sitemap.xml"
@@ -16,7 +17,7 @@ async def async_create_post(session, url, **kwargs) -> Post:
             new_post.find_translations()
             return new_post
     except asyncio.ClientConnectorError as e:
-        print(e)
+        translate_logger.error(e)
 
 
 async def get_all_posts():

@@ -18,8 +18,8 @@ LOGFILE = "app.log"
 translate_logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
-    filename=LOGFILE,
-    filemode="a",
+    #filename=LOGFILE,
+    #filemode="a",
     format="%(asctime)s [%(name)s %(levelname)s] - %(message)s",
 )
 
