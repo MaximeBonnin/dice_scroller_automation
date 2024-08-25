@@ -31,8 +31,9 @@ name: 'Build and Deploy to Cloud Run'
 
 on:
   push:
-    branches:
-      - '"main"'
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   PROJECT_ID: '${{ secrets.GOOGLE_CLOUD_PROJECT }}' # TODO: update to your Google Cloud project ID
