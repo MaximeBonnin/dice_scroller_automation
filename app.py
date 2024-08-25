@@ -1,5 +1,11 @@
 from flask import Flask, render_template, request, url_for, session, redirect
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, set_access_cookies, unset_jwt_cookies
+from flask_jwt_extended import (
+    create_access_token,
+    jwt_required,
+    JWTManager,
+    set_access_cookies,
+    unset_jwt_cookies,
+)
 import hashlib
 import pandas as pd
 import asyncio
@@ -49,17 +55,17 @@ def login_user(email: str, password: str) -> bool:
 def custom_unauthorized_response(_err):
     # TODO log this
     print(_err)
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 
-@app.route("/", methods=['GET', "POST"])
+@app.route("/", methods=["GET", "POST"])
 @jwt_required()
 def index():
     if request.method == "POST":
         return handle_input(request)
 
     url = request.args.get("url", default=None)
-    return render_template("index.html", url_to_search = url)
+    return render_template("index.html", url_to_search=url)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -67,7 +73,9 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    login_reponse = login_user(email=request.form["Email"], password=request.form["Password"])
+    login_reponse = login_user(
+        email=request.form["Email"], password=request.form["Password"]
+    )
 
     if not login_reponse:
         return render_template("login.html")
@@ -83,14 +91,14 @@ def logout():
     unset_jwt_cookies(response)
 
     return response
-    
+
 
 @app.route("/log", methods=["GET"])
 @jwt_required()
 def get_log():
     with open("app.log", "r") as logfile:
         log_list = logfile.readlines()
-        filtered_logs = [l for l in log_list if "translate" in l]
+        filtered_logs = [log for log in log_list if "translate" in log]
     return render_template("log.html", log=filtered_logs)
 
 
@@ -109,11 +117,11 @@ def affiliate():
 @app.route("/translations_table", methods=["GET"])
 @jwt_required()
 def translations_table():
-    list_of_posts: list["Post"] = asyncio.run(get_all_posts()) 
+    list_of_posts: list["Post"] = asyncio.run(get_all_posts())
 
     filtered_list_of_posts = [p for p in list_of_posts if p.language == "de"]
 
-    return render_template("translations_table.html", all_posts = filtered_list_of_posts)
+    return render_template("translations_table.html", all_posts=filtered_list_of_posts)
 
 
 if __name__ == "__main__":

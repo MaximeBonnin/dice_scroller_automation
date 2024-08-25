@@ -19,7 +19,6 @@ async def async_create_post(session, url, **kwargs) -> Post:
         print(e)
 
 
-
 async def get_all_posts():
     async with aiohttp.ClientSession() as session:
         response = requests.get(SITEMAP_URL)
@@ -32,6 +31,6 @@ async def get_all_posts():
         return posts
 
 
-if __name__ == '__main__':
-    response_list = asyncio.run(get_all_posts()) 
+if __name__ == "__main__":
+    response_list = asyncio.run(get_all_posts())
     print(response_list)
