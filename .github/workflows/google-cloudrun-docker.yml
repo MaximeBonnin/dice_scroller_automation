@@ -38,7 +38,7 @@ on:
 env:
   project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
   REGION: 'europe-west3' # TODO: update to your region
-  SERVICE: 'dice-scroller-admin' # TODO: update to your service name
+  SERVICE: 'dice-scroller-github-action' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_NAME }} # TODO: update to your workload identity provider
 
 jobs:
@@ -81,7 +81,7 @@ jobs:
 
       - name: 'Build and Push Container'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.project_id }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}" # mistyped the repo
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.project_id }}/${{ env.SERVICE }}:${{ github.sha }}" # mistyped the repo
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
