@@ -37,6 +37,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT }} # TODO: update to your Google Cloud project ID
+  project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
   REGION: 'europe-west3' # TODO: update to your region
   SERVICE: ${{ secrets.SERVICE_NAME }} # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_NAME }} # TODO: update to your workload identity provider
