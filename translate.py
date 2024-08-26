@@ -20,7 +20,7 @@ logging.basicConfig(
     level=logging.INFO,
     filename=LOGFILE,
     filemode="a",
-    format="%(asctime)s [%(name)s %(levelname)s] - %(message)s",
+    format="%(asctime)s [%(name)s %(levelname)s] - %(message)s"
 )
 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
