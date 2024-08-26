@@ -38,7 +38,7 @@ on:
 env:
   project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
   REGION: 'europe-west3' # TODO: update to your region
-  SERVICE: ${{ secrets.SERVICE_NAME }} # TODO: update to your service name
+  SERVICE: 'dice-scroller-admin' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_NAME }} # TODO: update to your workload identity provider
 
 jobs:
