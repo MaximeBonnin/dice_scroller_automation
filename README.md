@@ -1,5 +1,7 @@
 # Automated translation of WordPress Posts using ChatGPT and DeepL using Python
 
+![Screenshot](main_screen.png)
+
 This project is mostly for personal use but if you can get some inspiration out of it, feel free!
 
 ## Use case
