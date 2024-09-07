@@ -98,7 +98,11 @@ def get_log():
     with open("app.log", "r") as logfile:
         log_list = logfile.readlines()
         filtered_logs = [log for log in log_list if "translate" in log]
-    return render_template("log.html", log=filtered_logs)
+        last_logs = filtered_logs
+        last_logs.reverse()
+        if len(last_logs) > 10:
+            last_logs = last_logs[-10:]
+    return render_template("log.html", log=last_logs)
 
 
 @app.route("/translations", methods=["GET"])
