@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, url_for, session, redirect
+from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import (
     create_access_token,
     jwt_required,
     JWTManager,
     set_access_cookies,
     unset_jwt_cookies,
+    get_jwt,
+    get_jwt_identity,
 )
 import hashlib
 import pandas as pd
@@ -55,6 +58,28 @@ def login_user(email: str, password: str) -> bool:
 def custom_unauthorized_response(_err):
     translate_logger.error(_err)
     return redirect(url_for("login"))
+
+@jwt.expired_token_loader
+def custom_expired_reponse(header, data):
+    translate_logger.info("Token expired")
+    return redirect(url_for("login"))
+
+
+# Using an `after_request` callback, we refresh any token that is within 30
+# minutes of expiring. Change the timedeltas to match the needs of your application.
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original response
+        return response
 
 
 @app.route("/", methods=["GET", "POST"])
