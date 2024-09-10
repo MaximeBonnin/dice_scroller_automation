@@ -1,3 +1,5 @@
+import logging.config
+import logging.handlers
 import deepl
 import re
 from slugify import slugify
@@ -14,14 +16,61 @@ import os
 #   - WP_USER
 #   - WP_PW           (this is not your login, but the auth password)
 
-LOGFILE = "app.log"
-translate_logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO,
-    filename=LOGFILE,
-    filemode="a",
-    format="%(asctime)s [%(name)s %(levelname)s] - %(message)s"
-)
+# https://www.youtube.com/watch?v=9L77QExPmI0&t=1030s&ab_channel=mCoding
+logging_config = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "translate": {
+            "class": "UserLogFilter"
+        }
+    },
+    "formatters": {
+        "user": {
+            "format": "%(asctime)s | %(name)s %(message)s",
+            "datefmt": "%H:%M:%S"
+            
+        },
+        "app": {
+            "format": "%(asctime)s [%(name)s %(levelname)s] - %(message)s"
+        }
+    },
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "formatter": "app",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "user",
+            "filters": ["translate"],
+            "filename": "app.log",
+            "maxBytes": 10000,
+            "backupCount": 1
+        }
+    },
+    "loggers": {
+        "root": {
+            "level": "INFO",
+            "handlers": [
+                "stdout"
+            ]
+        },
+        "Translate": {  # Only 'Translate' logger will write to both stdout and file
+            "level": "INFO",
+            "handlers": ["file"],  # File and stdout for this logger
+        }
+    }
+}
+
+class UserLogFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord):
+        return record.name == "Translate"
+
+translate_logger = logging.getLogger("Translate")
+logging.config.dictConfig(config=logging_config)
+
 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
