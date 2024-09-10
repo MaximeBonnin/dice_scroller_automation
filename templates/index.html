@@ -44,7 +44,7 @@ Translate stuff
             const csrfToken = getCookie('csrf_access_token');
             
             // Send the POST request using fetch API
-            fetch('#', {
+            fetch('#', { //FIXME this is blocking other requests for some reason when deployed on Cloud Run? Working locally? Idk why
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken, // Add the CSRF token to the headers
