@@ -61,7 +61,7 @@ def custom_unauthorized_response(_err):
 
 @jwt.expired_token_loader
 def custom_expired_reponse(header, data):
-    translate_logger.info("Token expired")
+    translate_logger.debug("Token expired")
     return redirect(url_for("login"))
 
 
