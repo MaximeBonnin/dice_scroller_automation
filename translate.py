@@ -9,6 +9,7 @@ import requests
 from openai import OpenAI
 import logging
 import os
+from time import time
 
 # required environment variables:
 #   - OPENAI_API_KEY
@@ -27,7 +28,7 @@ logging_config = {
     },
     "formatters": {
         "user": {
-            "format": "%(asctime)s | %(name)s %(message)s",
+            "format": "%(asctime)s | %(message)s",
             "datefmt": "%H:%M:%S"
             
         },
@@ -57,9 +58,9 @@ logging_config = {
                 "stdout"
             ]
         },
-        "Translate": {  # Only 'Translate' logger will write to both stdout and file
+        "Translate": {
             "level": "INFO",
-            "handlers": ["file"],  # File and stdout for this logger
+            "handlers": ["file"],
         }
     }
 }
@@ -209,12 +210,13 @@ def post_to_wp(data) -> None:
     translate_logger.info("Posting to WordPress...")
     api_url = "https://dice-scroller.com/wp-json/wp/v2/posts"
     response = requests.post(api_url, headers=wordpress_header, json=data)
-    translate_logger.info("Reponse: " + f"{response.status_code})")
+    translate_logger.info("Reponse: " + f"{response.status_code}")
     assert response.status_code == 201, "Response should be 201: Created"
     translate_logger.info("Draft created in WordPress")
 
 
 def translate(url: str):
+    start = time()
     if not url or "https://dice-scroller.com/" not in url:
         translate_logger.error("URL including 'https://dice-scroller.com/' required.")
         return
@@ -229,10 +231,8 @@ def translate(url: str):
     gpt_verified = verifiy_using_gpt(german=content, english=deepl_translated)
     post_data = fill_in_data(wp_post_json, gpt_verified)
     post_to_wp(post_data)
-    translate_logger.info("Post translated!")
-    translate_logger.info(
-        f"Translated post in editor: <a href='https://dice-scroller.com/wp-admin/post.php?post={id}&action=edit'>https://dice-scroller.com/wp-admin/post.php?post={id}&action=edit</a>"
-    )
+    time_taken = time() - start
+    translate_logger.info(f"Post translated in {time_taken:.0f} seconds!")
 
 
 if __name__ == "__main__":

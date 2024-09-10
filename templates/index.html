@@ -75,16 +75,10 @@ Translate stuff
 </script>
 {% endif %}
 
-<div hx-get="/log" hx-trigger="every 1s" hx-target="#log-container" hx-swap="innerHTML"></div>
-
-<div class="card">
+<div class="card" hx-get="/log" hx-trigger="load delay:1s" hx-target="this" hx-swap="outerHTML">
+    <h5 class="card-title log-first-line">Getting ready...</h5>
     <div class="card-body">
-        <samp class="log-container" id="log-container">
-            {% for line in log %}
-            {{ line }}
-            <br>
-            {% endfor %}
-        </samp>
+        Loading logs...
     </div>
 </div>
 

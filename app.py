@@ -24,7 +24,7 @@ app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 jwt = JWTManager(app)
 
-translate_logger.info("App started. Ready to serve requests")
+translate_logger.info("App is running. Enter a URL to start translating!")
 
 
 def handle_input(request):
@@ -121,12 +121,11 @@ def logout():
 @jwt_required()
 def get_log():
     with open("app.log", "r") as logfile:
-        log_list = logfile.readlines()
-        filtered_logs = [log for log in log_list if "translate" in log]
-        last_logs = filtered_logs
+        last_logs = logfile.readlines()
+
         last_logs.reverse()
         if len(last_logs) > 10:
-            last_logs = last_logs[-10:]
+            last_logs = last_logs[:10]
     return render_template("log.html", log=last_logs)
 
 

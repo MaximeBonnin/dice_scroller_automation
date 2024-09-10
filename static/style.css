@@ -49,3 +49,9 @@ h1 {
     display: flex;
     justify-content: space-between;
 }
+
+.log-first-line {
+    color: #29363d;
+    padding-top: 1rem;
+    padding-left: 1rem;
+}
