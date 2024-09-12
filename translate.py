@@ -148,10 +148,6 @@ def get_wp_post(id: str) -> dict:
     url = f"https://dice-scroller.com/wp-json/wp/v2/posts/{id}"
     resp = requests.get(url=url)
     translate_logger.info("Status: " + f"{resp.status_code}")
-    with open("reponse.json", "w") as f:
-        translate_logger.info("Writing to file...")
-        f.writelines(json.dumps(resp.json(), indent=2))
-
     return resp.json()
 
 
@@ -221,10 +217,10 @@ def translate(url: str):
         translate_logger.error("URL including 'https://dice-scroller.com/' required.")
         return
     id = get_id_from_url(url)
-    wp_post_json = get_wp_post(id)
     if find_translation(url):
         translate_logger.error("URL already translated")
         return
+    wp_post_json = get_wp_post(id)
     content = wp_post_json["content"]["rendered"]
     content = handle_links(content)
     deepl_translated = translate_with_deepl(content)
